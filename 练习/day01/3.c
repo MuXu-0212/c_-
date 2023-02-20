@@ -88,13 +88,53 @@ bool linklist_print(linklist head)
 	return true;
 }
 
-// void linklist_find()
+//排序
+bool linklist_sort(linklist head)
+{
+	if (head->next == NULL)
+	{
+		printf("表空!\n");
+		return false;
+	}
+
+	lnode* pre = NULL;	//当前需要对比的节点
+	lnode* p = NULL;	//用于寻找比后面序列中比pre小的值
+	lnode* p_temp = NULL; //记录最小值节点的地址
+	int min = 0;	//储存最小值
+
+	//固定pre,移动p
+	for (pre=head->next; pre!=NULL; pre=pre->next)
+	{
+		min = pre->data;
+		p_temp = pre;
+		for (p=pre->next; p!=NULL; p=p->next)
+		{
+			if (min > p->data)
+			{
+				min = p->data;	//记录最小数值
+				p_temp = p;		//记录最小值节点的地址
+				// printf("%d\n", min);
+			}
+		}
+
+		//节点的值交换
+		p_temp->data = pre->data;	
+		pre->data = min;
+	}
+
+	return true;
+
+}
 int main(int argc, char const *argv[])
 {
 	lnode* head = linklist_init();
 
 	linklist_scanf( head);
 	linklist_print( head);
-	linklist_MaxData_MaxNode( head);
+
+	linklist_sort( head);
+	printf("排序后\n");
+	linklist_print( head);
+
 	return 0;
 }
