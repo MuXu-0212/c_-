@@ -1,13 +1,20 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <time.h>
+
 
 /*
-	2.数三出局
+	3.设计一个空链表,以正数作为结点
+		,向单链表中不断插入结点, 完成链表的建立
+		,逆转链表中的结点.
+	例如:(原有4,2,8,6,1,逆转后,变成1,6,8,2,4)
 */
+
 
 typedef struct lnode{
 	int data;
+	int num;
 	struct lnode* next;
 }lnode, *linklist;
 
@@ -51,20 +58,19 @@ void linklist_insert_tail(linklist head, linklist new)
 }
 
 //输入结点
-int linklist_scanf(linklist head)
+void linklist_scanf(linklist head)
 {
-	int input = 0;
-	lnode* new = NULL;
-	printf("请输入\"数三出局\"的游戏人数>");
-	scanf("%d", &input);
+	int i=0;
+	srand(time(NULL));
+	int len = rand()%8+5;
 
-	for (int i=1; i<=input; i++)
+	for (i=0; i<len ;i++)
 	{
-		new = linklist_new_node( i);
+		lnode* new = linklist_new_node( rand()%100+1);
 		linklist_insert_tail( head, new);
 	}
-	return input;
 }
+
 
 //打印
 bool linklist_print(linklist head)
@@ -84,57 +90,70 @@ bool linklist_print(linklist head)
 	return true;
 }
 
-//len为总人数
-int game(linklist head, int len) 
+//4.尾插
+void linklist_TailAdd(lnode* head, lnode* p)
 {
+	lnode* temp = head;
+
+	for (temp=head; temp->next!=NULL; temp=temp->next);
+
+	temp->next = p; 
+}
+
+bool linklist_reverse(linklist head)
+{
+	if (head->next == NULL || head->next->next == NULL)
+	{
+		return false;
+	}
+
+	int len=0;
+
+	//找到链表中最后一个节点last
+	lnode* last = head;
+	for ( last=head->next; last->next!=NULL; last=last->next)
+	{
+		len++;
+	}
+
 	lnode* pre = head;
 	lnode* p = head->next;
-	int count = 1;
 
-	while (len != 1)
+	while (len--)
 	{
-		if (p->next != NULL)
+		while (p->next != last)
 		{
-			pre = pre->next;
-			p = p->next;
+			p=p->next;
+			pre=pre->next;
 		}
-		else
-		{
-			pre = head;
-			p = head->next;
-		}
+		pre->next = last;
+		p->next = NULL;
+        linklist_TailAdd(last, p);
 
-		count++;
-		if (count == 3)
-		{
-			pre->next = p->next;
-			free(p);
-			len--;
+        pre = head;
+        p = head->next;
+	}
 
-			if (pre->next == NULL)
-			{
-				pre = head;
-				p = head->next;
-			}
 
-			p = pre->next;
-			count = 1;
-		}
-	} //while (len != 1)
-	printf("%d\n", head->next->data);
-	return 1;
+	return true;
+
 }
+
 
 int main(int argc, char const *argv[])
 {
-	lnode* head = linklist_init();  //初始化链表
+	lnode* head = linklist_init();
 
-	int len = linklist_scanf( head);  
-	linklist_print( head);  //打印链表
+	linklist_scanf( head);
+	linklist_print( head);
 
-    game( head, len) ;
-	// linklist_print( head);  //打印链表
+	printf("逆序后\n");
+	linklist_reverse( head);
+	linklist_print( head);
 
-	
+
+
 	return 0;
 }
+
+
